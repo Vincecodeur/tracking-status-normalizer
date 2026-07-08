@@ -1,0 +1,4 @@
+{
+  "carrier": "PUDO Carrier",
+  "statuses": ["Available for pickup", "Pickup expired"]
+}

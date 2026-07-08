@@ -1,0 +1,4 @@
+{
+  "carrier": "DHL",
+  "statuses": ["Shipment in transit", "Out for delivery", "Shipment delivered"]
+}

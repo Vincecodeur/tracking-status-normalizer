@@ -1,0 +1,9 @@
+{
+  "carrier": "Locker Carrier",
+  "statuses": [
+    "Arrived at pickup point",
+    "Delivered to pickup point",
+    "Available for pickup",
+    "Picked up by customer"
+  ]
+}
