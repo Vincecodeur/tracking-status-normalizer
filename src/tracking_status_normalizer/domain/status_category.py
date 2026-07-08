@@ -1,0 +1,12 @@
+from enum import Enum
+
+
+class StatusCategory(str, Enum):
+    PRE_SHIPMENT = "PRE_SHIPMENT"
+    INBOUND = "INBOUND"
+    TRANSIT = "TRANSIT"
+    LAST_MILE = "LAST_MILE"
+    DELIVERED = "DELIVERED"
+    DELIVERY_EXCEPTION = "DELIVERY_EXCEPTION"
+    RETURN = "RETURN"
+    EXCEPTION = "EXCEPTION"
