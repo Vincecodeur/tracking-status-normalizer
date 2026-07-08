@@ -1,0 +1,44 @@
+{
+  "mappings": [
+    {
+      "carrier": "DHL",
+      "raw_status": "Shipment delivered",
+      "canonical_status": "DELIVERED"
+    },
+    {
+      "carrier": "DHL",
+      "raw_status": "Shipment in transit",
+      "canonical_status": "IN_TRANSIT"
+    },
+    {
+      "carrier": "UPS",
+      "raw_status": "Delivered",
+      "canonical_status": "DELIVERED"
+    },
+    {
+      "carrier": "UPS",
+      "raw_status": "On the way",
+      "canonical_status": "IN_TRANSIT"
+    },
+    {
+      "carrier": "Colissimo",
+      "raw_status": "Votre colis est livré",
+      "canonical_status": "DELIVERED"
+    },
+    {
+      "carrier": "Colissimo",
+      "raw_status": "Votre colis est en cours d’acheminement",
+      "canonical_status": "IN_TRANSIT"
+    },
+    {
+      "carrier": "Amazon Shipping",
+      "raw_status": "Package delivered",
+      "canonical_status": "DELIVERED"
+    },
+    {
+      "carrier": "Amazon Shipping",
+      "raw_status": "Package in transit",
+      "canonical_status": "IN_TRANSIT"
+    }
+  ]
+}
