@@ -13,7 +13,10 @@ def test_normalize_known_status():
         registry,
     )
 
-    assert result == CanonicalStatus.DELIVERED
+    assert result.carrier == "DHL"
+    assert result.raw_status == "Shipment delivered"
+    assert result.canonical_status == CanonicalStatus.DELIVERED
+    assert result.mapped is True
 
 
 def test_normalize_unknown_status():
@@ -27,7 +30,10 @@ def test_normalize_unknown_status():
         registry,
     )
 
-    assert result is None
+    assert result.carrier == "DHL"
+    assert result.raw_status == "Unknown status"
+    assert result.canonical_status is None
+    assert result.mapped is False
 
 
 def test_normalize_with_accents_and_punctuation():
@@ -41,4 +47,5 @@ def test_normalize_with_accents_and_punctuation():
         registry,
     )
 
-    assert result == CanonicalStatus.DELIVERED
+    assert result.canonical_status == CanonicalStatus.DELIVERED
+    assert result.mapped is True
