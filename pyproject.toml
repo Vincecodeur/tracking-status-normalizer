@@ -31,8 +31,11 @@ dev = [
     "pytest-cov>=5.0"
 ]
 
+
 [project.scripts]
-tracking-status-normalizer = "tracking_status_normalizer.cli:main"
+tsn = "tracking_status_normalizer.cli.main:main"
+tracking-status-normalizer = "tracking_status_normalizer.cli.main:main"
+
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/tracking_status_normalizer"]
