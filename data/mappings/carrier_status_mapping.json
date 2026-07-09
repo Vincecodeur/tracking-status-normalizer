@@ -2,6 +2,11 @@
   "mappings": [
     {
       "carrier": "DHL",
+      "raw_status": "Out for delivery",
+      "canonical_status": "OUT_FOR_DELIVERY"
+    },
+    {
+      "carrier": "DHL",
       "raw_status": "Shipment delivered",
       "canonical_status": "DELIVERED"
     },
