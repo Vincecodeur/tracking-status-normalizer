@@ -436,3 +436,13 @@ This project demonstrates:
 # License
 
 This project is licensed under the MIT License.
+
+## Continuous Integration
+
+GitHub Actions validates:
+
+- Unit tests
+- Package installation
+- Wheel build
+
+for every push and pull request.
