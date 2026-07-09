@@ -143,10 +143,27 @@ def test_validate_unknown_canonical_status():
     )
 
     assert response.status_code == 400
-    assert response.json()["detail"] == (
-        "Unknown canonical status in request."
+
+    payload = response.json()
+
+    assert payload["error"] is True
+
+    assert (
+        payload["code"]
+        == "UNKNOWN_CANONICAL_STATUS"
     )
 
+    assert (
+        payload["message"]
+        == "Unknown canonical status in request."
+    )
+
+    assert payload["details"] == {
+        "statuses": [
+            "IN_TRANSIT",
+            "UNKNOWN_STATUS",
+        ]
+    }
 
 def test_process_valid_shipment(tmp_path):
     mapping_file = tmp_path / "mapping.json"
@@ -202,17 +219,20 @@ def test_process_valid_shipment(tmp_path):
     assert payload["unmapped_statuses"] == 0
 
 
-def test_process_missing_mapping_file():
+def test_normalize_missing_mapping_file():
     response = client.post(
-        "/process",
+        "/normalize",
         json={
             "carrier": "DHL",
-            "statuses": [
-                "Shipment delivered",
-            ],
+            "raw_status": "Shipment delivered",
             "mapping_file_path": "missing-file.json",
         },
     )
 
     assert response.status_code == 400
-    assert "Mapping file not found" in response.json()["detail"]
+
+    payload = response.json()
+
+    assert payload["error"] is True
+    assert payload["code"] == "MAPPING_FILE_NOT_FOUND"
+    assert "Mapping file not found" in payload["message"]

@@ -6,6 +6,75 @@ The format is inspired by Keep a Changelog and Semantic Versioning.
 
 ---
 
+## [0.5.0] - 2026-07-09
+
+### Added
+
+#### Command Line Interface
+
+- Added `tsn` command line interface.
+- Added `tsn process` command.
+- Added shipment JSON file processing through the CLI.
+- Added formatted CLI output for shipment processing results.
+
+#### REST API
+
+- Added FastAPI application layer.
+- Added `GET /health` endpoint.
+- Added `POST /normalize` endpoint.
+- Added `POST /validate` endpoint.
+- Added `POST /process` endpoint.
+- Added Swagger UI documentation through FastAPI.
+- Added OpenAPI specification generation.
+
+#### API Error Handling
+
+- Added centralized API error handling.
+- Added structured API error responses.
+- Added stable API error codes:
+  - `MAPPING_FILE_NOT_FOUND`
+  - `INVALID_MAPPING_FILE`
+  - `UNKNOWN_CANONICAL_STATUS`
+  - `INVALID_REQUEST`
+  - `INTERNAL_ERROR`
+
+#### Packaging
+
+- Updated project version to `0.5.0`.
+- Added Python package build validation.
+- Added wheel and source distribution generation.
+- Added development dependency for package building.
+
+#### Continuous Integration
+
+- Added GitHub Actions CI workflow.
+- Added automated test execution on push and pull request.
+- Added automated package build validation in CI.
+
+### Changed
+
+- Updated API version from `0.4.0` to `0.5.0`.
+- Updated package version from `0.4.0` to `0.5.0`.
+- Improved API contract consistency.
+- Replaced default FastAPI `detail` error responses for business errors with structured error payloads.
+
+### Tests
+
+- Expanded automated test suite to cover:
+  - CLI behavior
+  - FastAPI endpoints
+  - API error handling
+  - Normalize endpoint
+  - Validate endpoint
+  - Process endpoint
+
+Current test status:
+
+````text
+47 tests passing
+0 failures
+
+
 ## [0.4.0] - 2026-07-08
 
 ### Added
@@ -133,7 +202,7 @@ Current test status:
 ```text
 37 tests passing
 0 failures
-```
+````
 
 ### Architecture
 

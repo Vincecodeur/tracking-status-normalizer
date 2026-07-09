@@ -4,23 +4,25 @@ API schemas.
 This module defines request and response models used by the FastAPI layer.
 """
 
+from typing import Any
+
 from pydantic import BaseModel
+
+
+class ErrorResponse(BaseModel):
+    """
+    Standard API error response.
+    """
+
+    error: bool
+    code: str
+    message: str
+    details: Any | None = None
 
 
 class NormalizeStatusRequest(BaseModel):
     """
     Request body for single status normalization.
-
-    Attributes:
-        carrier:
-            Carrier name.
-
-        raw_status:
-            Raw carrier status.
-
-        mapping_file_path:
-            Optional path to the mapping file.
-            If not provided, the default project mapping file is used.
     """
 
     carrier: str
@@ -42,17 +44,6 @@ class NormalizeStatusResponse(BaseModel):
 class ValidateLifecycleRequest(BaseModel):
     """
     Request body for canonical lifecycle validation.
-
-    Attributes:
-        statuses:
-            Ordered canonical statuses represented as strings.
-
-    Example:
-        [
-            "IN_TRANSIT",
-            "OUT_FOR_DELIVERY",
-            "DELIVERED"
-        ]
     """
 
     statuses: list[str]
@@ -70,17 +61,6 @@ class ValidateLifecycleResponse(BaseModel):
 class ProcessShipmentRequest(BaseModel):
     """
     Request body for shipment processing.
-
-    Attributes:
-        carrier:
-            Carrier name.
-
-        statuses:
-            Ordered raw carrier statuses.
-
-        mapping_file_path:
-            Optional path to the mapping file.
-            If not provided, the default project mapping file is used.
     """
 
     carrier: str

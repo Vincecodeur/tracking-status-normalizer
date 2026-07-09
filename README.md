@@ -1,41 +1,60 @@
 # Tracking Status Normalizer
 
-A Python domain engine for carrier status normalization, shipment lifecycle validation, and tracking analytics.
+Current version: 0.5.0
 
-## Overview
+A Python platform for carrier status normalization, shipment lifecycle validation, shipment processing, and API-based tracking analytics.
 
-Tracking carriers use different status vocabularies:
+---
+
+# Overview
+
+Carriers use different tracking vocabularies.
+
+Examples:
 
 | Carrier         | Raw Status            |
 | --------------- | --------------------- |
 | DHL             | Shipment delivered    |
 | UPS             | Delivered             |
-| Amazon Shipping | Package delivered     |
 | Colissimo       | Votre colis est livré |
+| Amazon Shipping | Package delivered     |
 
-The Tracking Status Normalizer converts those carrier-specific statuses into a shared canonical language:
+The Tracking Status Normalizer converts heterogeneous carrier statuses into a common canonical tracking language.
+
+Example:
 
 ```text
+Shipment delivered
+Delivered
+Votre colis est livré
+Package delivered
+
+        ↓
+
 DELIVERED
 ```
 
-This enables:
+The project provides:
 
-- Multi-carrier tracking
-- OMS integration
-- WMS integration
-- TMS integration
-- Parcel Tracking platforms
-- Analytics and reporting
+- Canonical shipment tracking taxonomy
+- Carrier status normalization
 - Shipment lifecycle validation
+- Shipment lifecycle analysis
+- Shipment processing engine
+- Catalog governance tools
+- Command Line Interface
+- FastAPI REST API
+- Structured API error handling
+- GitHub Actions CI
+- Python package distribution support
 
 ---
 
-# Features
+# Core Capabilities
 
-## Canonical Status Taxonomy
+## 1. Canonical Tracking Taxonomy
 
-The project provides a carrier-agnostic shipment tracking model.
+The project defines a carrier-neutral tracking status model.
 
 ### Canonical Statuses
 
@@ -76,7 +95,7 @@ DAMAGED
 HELD
 ```
 
-### Categories
+### Status Categories
 
 ```text
 PRE_SHIPMENT
@@ -100,9 +119,9 @@ FAILED
 
 ---
 
-## Status Normalization
+## 2. Status Normalization
 
-Convert carrier-specific statuses into canonical statuses.
+The normalization engine converts carrier-specific statuses into canonical statuses.
 
 Example:
 
@@ -127,11 +146,11 @@ NormalizationResult(
 
 ---
 
-## Shipment Lifecycle Validation
+## 3. Lifecycle Validation
 
-Validate shipment status progression using a state machine.
+The validation engine checks whether a shipment status sequence follows valid lifecycle transitions.
 
-Valid:
+Valid lifecycle:
 
 ```text
 IN_TRANSIT
@@ -141,7 +160,7 @@ OUT_FOR_DELIVERY
 DELIVERED
 ```
 
-Invalid:
+Invalid lifecycle:
 
 ```text
 DELIVERED
@@ -151,64 +170,51 @@ IN_TRANSIT
 
 ---
 
-## Lifecycle Analysis
+## 4. Lifecycle Analysis
 
-Analyze a shipment lifecycle and calculate:
+The analysis engine calculates:
 
-- Current Status
-- Status Category
-- Shipment Outcome
-- Terminal State
-- Return Flow Presence
-- Exception Presence
+- Current status
+- Current category
+- Shipment outcome
+- Terminal status flag
+- Exception presence
+- Return flow presence
 
 ---
 
-## Shipment Processor
+## 5. Shipment Processing
 
-End-to-end shipment processing.
-
-Flow:
+The shipment processor orchestrates the complete workflow.
 
 ```text
-Raw Statuses
-    ↓
-Normalization
-    ↓
-Validation
-    ↓
-Analysis
-    ↓
+Raw Carrier Statuses
+        ↓
+Text Normalization
+        ↓
+Carrier Mapping
+        ↓
+Canonical Statuses
+        ↓
+Lifecycle Validation
+        ↓
+Lifecycle Analysis
+        ↓
 Shipment Result
 ```
 
 ---
 
-## Coverage Analysis
+## 6. Catalog Governance
 
-Measure catalog coverage.
+The project includes catalog quality and governance tools:
 
-Example:
+- Unknown status detection
+- Coverage analysis
+- Catalog analysis
+- Unmapped status reporting
 
-```text
-Total Statuses:      100
-Mapped Statuses:      92
-Unmapped Statuses:     8
-
-Coverage:           92%
-```
-
----
-
-## Catalog Governance
-
-Includes:
-
-- Catalog Analyzer
-- Unknown Status Detector
-- Unmapped Report Generator
-
-The engine helps identify missing mappings and improve catalog quality over time.
+These capabilities help identify missing mappings and improve mapping catalog quality over time.
 
 ---
 
@@ -216,31 +222,19 @@ The engine helps identify missing mappings and improve catalog quality over time
 
 The taxonomy supports:
 
-✅ Home Delivery
-
-✅ Business Delivery
-
-✅ Pickup Point (PUDO)
-
-✅ Locker Delivery
-
-✅ Customer Collection
-
-✅ Delivery Failures
-
-✅ Expired Pickup Windows
-
-✅ Automatic Returns
-
-✅ Customer Returns
-
-✅ Customs Processing
-
-✅ Shipment Loss
-
-✅ Damaged Shipments
-
-✅ Exception Management
+- Home delivery
+- Business delivery
+- Pickup point delivery
+- Locker delivery
+- Customer collection
+- Delivery failures
+- Expired pickup windows
+- Automatic returns
+- Customer-initiated returns
+- Customs processing
+- Shipment loss
+- Damaged shipments
+- Operational exceptions
 
 ---
 
@@ -250,110 +244,363 @@ The taxonomy supports:
 src/
 └── tracking_status_normalizer/
     │
-    ├── domain/
-    ├── validation/
+    ├── api/
     ├── analysis/
-    ├── normalization/
     ├── catalog/
+    ├── cli/
+    ├── domain/
+    ├── io/
+    ├── normalization/
     ├── processing/
-    └── io/
+    └── validation/
 ```
 
-## Domain
+## api/
 
-Core business model:
+FastAPI application layer.
 
-- Canonical Statuses
-- Categories
-- Outcomes
-- Transitions
+Exposes the engine through HTTP endpoints.
 
-## Validation
+## analysis/
 
-Business rule engine:
+Lifecycle analysis engine.
 
-- Status validation
-- Lifecycle validation
+Computes business summaries from canonical status lifecycles.
 
-## Analysis
-
-Shipment lifecycle analysis.
-
-## Normalization
-
-Carrier status normalization.
-
-## Catalog
+## catalog/
 
 Catalog quality and governance.
 
-## Processing
+Includes coverage analysis, catalog statistics, and unmapped status reporting.
 
-End-to-end shipment processing.
+## cli/
 
-## IO
+Command line interface.
+
+Provides terminal access to the shipment processing engine.
+
+## domain/
+
+Core business model.
+
+Includes canonical statuses, categories, outcomes, status definitions, and transition rules.
+
+## io/
 
 Input file loading.
+
+Currently supports shipment JSON files.
+
+## normalization/
+
+Carrier status normalization.
+
+Includes text normalization, mapping loading, normalization result objects, and unknown status detection.
+
+## processing/
+
+End-to-end shipment processing engine.
+
+Combines normalization, validation, and lifecycle analysis.
+
+## validation/
+
+Lifecycle validation engine.
+
+Validates canonical status transitions and full shipment lifecycles.
+
+---
+
+# Installation
+
+## Development Installation
+
+```bash
+git clone https://github.com/Vincecodeur/tracking-status-normalizer.git
+cd tracking-status-normalizer
+pip install -e .[dev]
+```
+
+---
+
+# Running Tests
+
+```bash
+pytest
+```
+
+Current test status:
+
+```text
+47 tests passing
+0 failures
+```
+
+---
+
+# Build Package
+
+Build the package:
+
+```bash
+python -m build
+```
+
+Expected artifacts:
+
+```text
+dist/
+├── tracking_status_normalizer-0.5.0.tar.gz
+└── tracking_status_normalizer-0.5.0-py3-none-any.whl
+```
+
+---
+
+# Continuous Integration
+
+The repository uses GitHub Actions.
+
+The CI workflow validates:
+
+```text
+Package installation
+Unit tests
+Package build
+```
+
+The workflow runs on push and pull request events.
+
+---
+
+# Command Line Interface
+
+The package exposes the `tsn` command.
+
+## Process a Shipment File
+
+```bash
+tsn process examples/data/dhl_delivery.json
+```
+
+Example output:
+
+```text
+==================================================
+Tracking Status Normalizer
+==================================================
+
+Carrier           : DHL
+Validation        : VALID
+Current Status    : DELIVERED
+Outcome           : SUCCESS
+Mapped Statuses   : 3
+Unmapped Statuses : 0
+```
+
+---
+
+# REST API
+
+The project includes a FastAPI application.
+
+## Start the API
+
+```bash
+uvicorn tracking_status_normalizer.api.app:app --reload
+```
+
+---
+
+## Swagger UI
+
+Swagger documentation is available at:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+---
+
+## OpenAPI Specification
+
+The OpenAPI contract is available at:
+
+```text
+http://127.0.0.1:8000/openapi.json
+```
+
+---
+
+# API Endpoints
+
+## GET /health
+
+Health check endpoint.
+
+Example response:
+
+```json
+{
+  "status": "ok"
+}
+```
+
+---
+
+## POST /normalize
+
+Normalize a single carrier status.
+
+Request:
+
+```json
+{
+  "carrier": "DHL",
+  "raw_status": "Shipment delivered"
+}
+```
+
+Response:
+
+```json
+{
+  "carrier": "DHL",
+  "raw_status": "Shipment delivered",
+  "canonical_status": "DELIVERED",
+  "mapped": true
+}
+```
+
+---
+
+## POST /validate
+
+Validate a canonical lifecycle.
+
+Request:
+
+```json
+{
+  "statuses": ["IN_TRANSIT", "OUT_FOR_DELIVERY", "DELIVERED"]
+}
+```
+
+Response:
+
+```json
+{
+  "valid": true,
+  "reason": null
+}
+```
+
+Invalid lifecycle example:
+
+```json
+{
+  "statuses": ["DELIVERED", "IN_TRANSIT"]
+}
+```
+
+Response:
+
+```json
+{
+  "valid": false,
+  "reason": "Invalid transition: DELIVERED -> IN_TRANSIT"
+}
+```
+
+---
+
+## POST /process
+
+Process a complete shipment lifecycle from raw carrier statuses.
+
+Request:
+
+```json
+{
+  "carrier": "DHL",
+  "statuses": ["Shipment in transit", "Out for delivery", "Shipment delivered"]
+}
+```
+
+Response:
+
+```json
+{
+  "carrier": "DHL",
+  "validation": "VALID",
+  "validation_reason": null,
+  "current_status": "DELIVERED",
+  "outcome": "SUCCESS",
+  "mapped_statuses": 3,
+  "unmapped_statuses": 0
+}
+```
+
+---
+
+# API Error Format
+
+The API returns structured error responses for business and input errors.
+
+Example:
+
+```json
+{
+  "error": true,
+  "code": "MAPPING_FILE_NOT_FOUND",
+  "message": "Mapping file not found: missing-file.json",
+  "details": null
+}
+```
+
+Supported API error codes include:
+
+```text
+MAPPING_FILE_NOT_FOUND
+INVALID_MAPPING_FILE
+UNKNOWN_CANONICAL_STATUS
+INVALID_REQUEST
+INTERNAL_ERROR
+```
 
 ---
 
 # Examples
 
-The repository includes runnable examples.
+Runnable examples are available in:
 
-## Normalize Status
-
-```bash
-python examples/normalize_status.py
+```text
+examples/
 ```
 
-## Validate Lifecycle
+Included examples:
 
-```bash
-python examples/validate_lifecycle.py
-```
-
-## Analyze Lifecycle
-
-```bash
-python examples/analyze_lifecycle.py
-```
-
-## Process Shipment
-
-```bash
-python examples/process_shipment.py
-```
-
-## Coverage Analysis
-
-```bash
-python examples/coverage_analysis.py
-```
-
-## Unknown Status Report
-
-```bash
-python examples/unknown_status_report.py
-```
-
-## Catalog Analysis
-
-```bash
-python examples/catalog_analysis.py
+```text
+normalize_status.py
+validate_lifecycle.py
+analyze_lifecycle.py
+process_shipment.py
+coverage_analysis.py
+unknown_status_report.py
+catalog_analysis.py
+load_and_process_shipment.py
 ```
 
 ---
 
 # Example Data
 
-Example shipment files can be found in:
+Example shipment files are available in:
 
 ```text
 examples/data/
 ```
 
-Examples include:
+Included example files:
 
 ```text
 dhl_delivery.json
@@ -366,18 +613,43 @@ invalid_lifecycle.json
 
 ---
 
-# Running Tests
+# Mapping Catalog
 
-Execute all tests:
-
-```bash
-pytest
-```
-
-Current Result:
+The default carrier status mapping file is located at:
 
 ```text
-37 passed
+data/mappings/carrier_status_mapping.json
+```
+
+The expected format is:
+
+```json
+{
+  "mappings": [
+    {
+      "carrier": "DHL",
+      "raw_status": "Shipment delivered",
+      "canonical_status": "DELIVERED"
+    }
+  ]
+}
+```
+
+---
+
+# Documentation
+
+Project documentation is available in:
+
+```text
+docs/
+```
+
+Current documentation includes:
+
+```text
+status-taxonomy.md
+domain-model.md
 ```
 
 ---
@@ -387,62 +659,68 @@ Current Result:
 ## Completed
 
 ```text
-✅ Epic 1 - Foundation
+Foundation
 
-✅ Epic 2 - Canonical Taxonomy
+Canonical Taxonomy
 
-✅ Epic 3 - Domain Engine
+Domain Engine
 
-✅ Epic 4 - Normalization Engine
+Normalization Engine
 
-✅ Epic 5 - Catalog Governance
+Catalog Governance
 
-✅ Epic 5.5 - Shipment File Loading
+Shipment Loader
+
+Command Line Interface
+
+FastAPI REST API
+
+Swagger / OpenAPI
+
+Centralized API Error Handling
+
+GitHub Actions CI
+
+Package Distribution
+
+Release 0.5.0
 ```
 
-## In Progress
+## Next
 
 ```text
-🚧 Epic 6 - Command Line Interface (CLI)
-```
+API Developer Experience
 
-## Planned
+API Error Documentation
 
-```text
-📅 Epic 7 - REST API
+Dashboard
 
-📅 Epic 8 - Dashboard
+PyPI Publication
 
-📅 Epic 9 - Release v1.0
+Release 1.0
 ```
 
 ---
 
-# Learning Objectives
+# Technical Highlights
 
 This project demonstrates:
 
-- Python Architecture
-- Domain-Driven Design (DDD)
-- State Machine Modeling
-- Logistics and Tracking Concepts
-- Data Quality Management
-- Catalog Governance
-- Test-Driven Development
-- Multi-Carrier Integration Patterns
+- Python package architecture
+- Domain modeling
+- State machine design
+- Carrier status normalization
+- Shipment lifecycle validation
+- Catalog governance
+- CLI design
+- FastAPI API design
+- Structured API error handling
+- Automated testing
+- GitHub Actions CI
+- Python packaging
 
 ---
 
 # License
 
-This project is licensed under the MIT License.
-
-## Continuous Integration
-
-GitHub Actions validates:
-
-- Unit tests
-- Package installation
-- Wheel build
-
-for every push and pull request.
+MIT License.

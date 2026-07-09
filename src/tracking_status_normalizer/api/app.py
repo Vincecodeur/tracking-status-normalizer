@@ -4,9 +4,17 @@ FastAPI application.
 This module exposes the Tracking Status Normalizer engine through HTTP endpoints.
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 
+from tracking_status_normalizer.api.errors import (
+    APIError,
+    APIErrorCode,
+    api_error_handler,
+    file_not_found_handler,
+    value_error_handler,
+)
 from tracking_status_normalizer.api.schemas import (
+    ErrorResponse,
     NormalizeStatusRequest,
     NormalizeStatusResponse,
     ProcessShipmentRequest,
@@ -40,17 +48,39 @@ app = FastAPI(
         "API for carrier status normalization, shipment lifecycle validation, "
         "and shipment processing."
     ),
-    version="0.4.0",
+    version="0.5.0",
 )
+
+
+# Centralized API exception handlers.
+app.add_exception_handler(
+    APIError,
+    api_error_handler,
+)
+
+app.add_exception_handler(
+    FileNotFoundError,
+    file_not_found_handler,
+)
+
+app.add_exception_handler(
+    ValueError,
+    value_error_handler,
+)
+
+
+ERROR_RESPONSES = {
+    400: {
+        "model": ErrorResponse,
+        "description": "Business or request error.",
+    }
+}
 
 
 @app.get("/health")
 def health_check() -> dict[str, str]:
     """
     Health check endpoint.
-
-    Returns:
-        Basic API health status.
     """
 
     return {
@@ -61,14 +91,13 @@ def health_check() -> dict[str, str]:
 @app.post(
     "/normalize",
     response_model=NormalizeStatusResponse,
+    responses=ERROR_RESPONSES,
 )
 def normalize_status_endpoint(
     request: NormalizeStatusRequest,
 ) -> NormalizeStatusResponse:
     """
     Normalize a single raw carrier status.
-
-    This endpoint converts one carrier-specific status into a canonical status.
     """
 
     mapping_file_path = (
@@ -76,28 +105,15 @@ def normalize_status_endpoint(
         or DEFAULT_MAPPING_FILE
     )
 
-    try:
-        mapping_registry = load_mapping_file(
-            mapping_file_path
-        )
+    mapping_registry = load_mapping_file(
+        mapping_file_path
+    )
 
-        result = normalize(
-            carrier=request.carrier,
-            raw_status=request.raw_status,
-            mapping_registry=mapping_registry,
-        )
-
-    except FileNotFoundError as error:
-        raise HTTPException(
-            status_code=400,
-            detail=str(error),
-        ) from error
-
-    except ValueError as error:
-        raise HTTPException(
-            status_code=400,
-            detail=str(error),
-        ) from error
+    result = normalize(
+        carrier=request.carrier,
+        raw_status=request.raw_status,
+        mapping_registry=mapping_registry,
+    )
 
     canonical_status = (
         result.canonical_status.value
@@ -116,14 +132,13 @@ def normalize_status_endpoint(
 @app.post(
     "/validate",
     response_model=ValidateLifecycleResponse,
+    responses=ERROR_RESPONSES,
 )
 def validate_lifecycle_endpoint(
     request: ValidateLifecycleRequest,
 ) -> ValidateLifecycleResponse:
     """
     Validate a lifecycle made of canonical statuses.
-
-    The input statuses must already be canonical status values.
     """
 
     try:
@@ -133,9 +148,13 @@ def validate_lifecycle_endpoint(
         ]
 
     except ValueError as error:
-        raise HTTPException(
+        raise APIError(
+            code=APIErrorCode.UNKNOWN_CANONICAL_STATUS,
+            message="Unknown canonical status in request.",
             status_code=400,
-            detail="Unknown canonical status in request.",
+            details={
+                "statuses": request.statuses,
+            },
         ) from error
 
     result = validate_lifecycle(
@@ -151,6 +170,7 @@ def validate_lifecycle_endpoint(
 @app.post(
     "/process",
     response_model=ProcessShipmentResponse,
+    responses=ERROR_RESPONSES,
 )
 def process_shipment_endpoint(
     request: ProcessShipmentRequest,
@@ -170,28 +190,15 @@ def process_shipment_endpoint(
         or DEFAULT_MAPPING_FILE
     )
 
-    try:
-        mapping_registry = load_mapping_file(
-            mapping_file_path
-        )
+    mapping_registry = load_mapping_file(
+        mapping_file_path
+    )
 
-        result = process_shipment(
-            carrier=request.carrier,
-            statuses=request.statuses,
-            mapping_registry=mapping_registry,
-        )
-
-    except FileNotFoundError as error:
-        raise HTTPException(
-            status_code=400,
-            detail=str(error),
-        ) from error
-
-    except ValueError as error:
-        raise HTTPException(
-            status_code=400,
-            detail=str(error),
-        ) from error
+    result = process_shipment(
+        carrier=request.carrier,
+        statuses=request.statuses,
+        mapping_registry=mapping_registry,
+    )
 
     validation_status = (
         "VALID"
