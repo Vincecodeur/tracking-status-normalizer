@@ -42,11 +42,20 @@ Repository = "https://github.com/Vincecodeur/tracking-status-normalizer"
 Issues = "https://github.com/Vincecodeur/tracking-status-normalizer/issues"
 
 [project.optional-dependencies]
+api = [
+    "fastapi",
+    "uvicorn[standard]"
+]
+
 dev = [
     "pytest>=8.0",
     "pytest-cov>=5.0",
-    "build>=1.2"
+    "build>=1.2",
+    "fastapi",
+    "uvicorn[standard]",
+    "httpx"
 ]
+
 
 [project.scripts]
 tsn = "tracking_status_normalizer.cli.main:main"
