@@ -1,20 +1,33 @@
 """
 FastAPI application.
 
-This module exposes the tracking status normalizer engine through HTTP endpoints.
+This module exposes the Tracking Status Normalizer engine through HTTP endpoints.
 """
 
 from fastapi import FastAPI, HTTPException
 
 from tracking_status_normalizer.api.schemas import (
+    NormalizeStatusRequest,
+    NormalizeStatusResponse,
     ProcessShipmentRequest,
     ProcessShipmentResponse,
+    ValidateLifecycleRequest,
+    ValidateLifecycleResponse,
+)
+from tracking_status_normalizer.domain.canonical_status import (
+    CanonicalStatus,
 )
 from tracking_status_normalizer.normalization.mapping_loader import (
     load_mapping_file,
 )
+from tracking_status_normalizer.normalization.normalizer import (
+    normalize,
+)
 from tracking_status_normalizer.processing.shipment_processor import (
     process_shipment,
+)
+from tracking_status_normalizer.validation.lifecycle_validator import (
+    validate_lifecycle,
 )
 
 
@@ -43,6 +56,96 @@ def health_check() -> dict[str, str]:
     return {
         "status": "ok",
     }
+
+
+@app.post(
+    "/normalize",
+    response_model=NormalizeStatusResponse,
+)
+def normalize_status_endpoint(
+    request: NormalizeStatusRequest,
+) -> NormalizeStatusResponse:
+    """
+    Normalize a single raw carrier status.
+
+    This endpoint converts one carrier-specific status into a canonical status.
+    """
+
+    mapping_file_path = (
+        request.mapping_file_path
+        or DEFAULT_MAPPING_FILE
+    )
+
+    try:
+        mapping_registry = load_mapping_file(
+            mapping_file_path
+        )
+
+        result = normalize(
+            carrier=request.carrier,
+            raw_status=request.raw_status,
+            mapping_registry=mapping_registry,
+        )
+
+    except FileNotFoundError as error:
+        raise HTTPException(
+            status_code=400,
+            detail=str(error),
+        ) from error
+
+    except ValueError as error:
+        raise HTTPException(
+            status_code=400,
+            detail=str(error),
+        ) from error
+
+    canonical_status = (
+        result.canonical_status.value
+        if result.canonical_status is not None
+        else None
+    )
+
+    return NormalizeStatusResponse(
+        carrier=result.carrier,
+        raw_status=result.raw_status,
+        canonical_status=canonical_status,
+        mapped=result.mapped,
+    )
+
+
+@app.post(
+    "/validate",
+    response_model=ValidateLifecycleResponse,
+)
+def validate_lifecycle_endpoint(
+    request: ValidateLifecycleRequest,
+) -> ValidateLifecycleResponse:
+    """
+    Validate a lifecycle made of canonical statuses.
+
+    The input statuses must already be canonical status values.
+    """
+
+    try:
+        canonical_statuses = [
+            CanonicalStatus(status)
+            for status in request.statuses
+        ]
+
+    except ValueError as error:
+        raise HTTPException(
+            status_code=400,
+            detail="Unknown canonical status in request.",
+        ) from error
+
+    result = validate_lifecycle(
+        canonical_statuses
+    )
+
+    return ValidateLifecycleResponse(
+        valid=result.valid,
+        reason=result.reason,
+    )
 
 
 @app.post(

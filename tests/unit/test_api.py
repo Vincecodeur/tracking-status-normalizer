@@ -17,6 +17,137 @@ def test_health_check():
     }
 
 
+def test_normalize_known_status(tmp_path):
+    mapping_file = tmp_path / "mapping.json"
+
+    mapping_file.write_text(
+        json.dumps(
+            {
+                "mappings": [
+                    {
+                        "carrier": "DHL",
+                        "raw_status": "Shipment delivered",
+                        "canonical_status": "DELIVERED",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    response = client.post(
+        "/normalize",
+        json={
+            "carrier": "DHL",
+            "raw_status": "Shipment delivered",
+            "mapping_file_path": str(mapping_file),
+        },
+    )
+
+    assert response.status_code == 200
+
+    payload = response.json()
+
+    assert payload["carrier"] == "DHL"
+    assert payload["raw_status"] == "Shipment delivered"
+    assert payload["canonical_status"] == "DELIVERED"
+    assert payload["mapped"] is True
+
+
+def test_normalize_unknown_status(tmp_path):
+    mapping_file = tmp_path / "mapping.json"
+
+    mapping_file.write_text(
+        json.dumps(
+            {
+                "mappings": [
+                    {
+                        "carrier": "DHL",
+                        "raw_status": "Shipment delivered",
+                        "canonical_status": "DELIVERED",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    response = client.post(
+        "/normalize",
+        json={
+            "carrier": "DHL",
+            "raw_status": "Unknown status",
+            "mapping_file_path": str(mapping_file),
+        },
+    )
+
+    assert response.status_code == 200
+
+    payload = response.json()
+
+    assert payload["canonical_status"] is None
+    assert payload["mapped"] is False
+
+
+def test_validate_valid_lifecycle():
+    response = client.post(
+        "/validate",
+        json={
+            "statuses": [
+                "IN_TRANSIT",
+                "OUT_FOR_DELIVERY",
+                "DELIVERED",
+            ]
+        },
+    )
+
+    assert response.status_code == 200
+
+    payload = response.json()
+
+    assert payload["valid"] is True
+    assert payload["reason"] is None
+
+
+def test_validate_invalid_lifecycle():
+    response = client.post(
+        "/validate",
+        json={
+            "statuses": [
+                "DELIVERED",
+                "IN_TRANSIT",
+            ]
+        },
+    )
+
+    assert response.status_code == 200
+
+    payload = response.json()
+
+    assert payload["valid"] is False
+    assert (
+        payload["reason"]
+        == "Invalid transition: DELIVERED -> IN_TRANSIT"
+    )
+
+
+def test_validate_unknown_canonical_status():
+    response = client.post(
+        "/validate",
+        json={
+            "statuses": [
+                "IN_TRANSIT",
+                "UNKNOWN_STATUS",
+            ]
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == (
+        "Unknown canonical status in request."
+    )
+
+
 def test_process_valid_shipment(tmp_path):
     mapping_file = tmp_path / "mapping.json"
 
