@@ -5,9 +5,11 @@ Tests for governance CLI orchestration.
 from tracking_status_normalizer.domain.canonical_status import (
     CanonicalStatus,
 )
-from tracking_status_normalizer.governance.cli.governance_cli import (
+
+from tracking_status_normalizer.cli.governance_cli import (
     build_governance_report_from_statuses,
 )
+
 
 
 def test_build_complete_governance_report():
