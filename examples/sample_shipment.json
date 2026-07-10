@@ -1,0 +1,9 @@
+{
+  "carrier": "SAMPLE_CARRIER",
+  "statuses": [
+    "Shipment created",
+    "In transit",
+    "Out for delivery",
+    "Delivered"
+  ]
+}

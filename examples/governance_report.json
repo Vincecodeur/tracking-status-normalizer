@@ -1,0 +1,33 @@
+{
+  "readiness": {
+    "level": "GO_WITH_RISKS"
+  },
+  "maturity": {
+    "score": 85,
+    "level": "MATURE"
+  },
+  "coverage": [
+    {
+      "capability": "DIRECT_DELIVERY",
+      "level": "FULL"
+    },
+    {
+      "capability": "RETURNS",
+      "level": "PARTIAL"
+    }
+  ],
+  "gaps": [
+    {
+      "capability": "RETURNS",
+      "missing_status": "RETURN_DELIVERED",
+      "severity": "LOW"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "LOW",
+      "capability": "RETURNS",
+      "message": "Add mapping for RETURN_DELIVERED to improve RETURNS."
+    }
+  ]
+}

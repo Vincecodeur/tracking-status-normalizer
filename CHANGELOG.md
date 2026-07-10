@@ -6,6 +6,206 @@ The format is inspired by Keep a Changelog and Semantic Versioning.
 
 ---
 
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is inspired by Keep a Changelog and follows Semantic Versioning principles.
+
+---
+
+## [1.0.0] - Initial Release
+
+### Added
+
+#### Domain Layer
+
+- Canonical status model
+- Shipment outcome model
+- Status categories
+- Status registry
+- Transition registry
+- Transition validation framework
+
+#### Normalization Layer
+
+- Carrier status normalization
+- Mapping registry
+- Mapping loader
+- Mapping rules
+- Text normalization
+- Unknown status detection
+- Coverage analysis
+
+#### Validation Layer
+
+- Shipment lifecycle validation
+- Validation result model
+
+#### Analysis Layer
+
+- Lifecycle analysis
+- Lifecycle summaries
+
+#### Processing Layer
+
+- End-to-end shipment processing
+- Shipment result model
+- Processing summaries
+
+#### Catalog Layer
+
+- Carrier catalog analysis
+- Catalog statistics
+- Unmapped status reporting
+
+#### CLI
+
+- Shipment processing command
+- Governance reporting command
+
+#### API
+
+- REST API entry point
+- Request and response schemas
+- Error handling
+
+---
+
+### Added - Governance Layer
+
+#### Operational Coverage
+
+- Capability model
+- Capability registry
+- Coverage evaluation
+- Coverage levels
+- Coverage reporting
+
+#### Readiness Assessment
+
+- Readiness levels
+- Readiness evaluation
+- Readiness reporting
+
+#### Gap Analysis
+
+- Gap model
+- Gap severity model
+- Gap detection rules
+- Gap reporting
+
+#### Recommendations
+
+- Recommendation model
+- Recommendation priorities
+- Recommendation generation
+
+#### Maturity Assessment
+
+- Maturity levels
+- Maturity scoring
+- Maturity reporting
+
+#### Governance Reporting
+
+- Governance report model
+- Governance report builder
+
+---
+
+### Added - Exporters
+
+- JSON exporter
+- Markdown exporter
+- CSV exporter
+- HTML exporter
+
+---
+
+### Added - Documentation
+
+- Architecture overview
+- Governance architecture
+- CLI guide
+- Exporters guide
+- Domain model
+- Status taxonomy
+- Carrier governance model
+- ADR documentation
+
+---
+
+### Added - Examples
+
+Example shipments:
+
+- DHL delivery flow
+- Colissimo delivery flow
+- Pickup expired flow
+- Locker delivery flow
+- Return flow
+- Invalid lifecycle flow
+
+Example reports:
+
+- Governance report (JSON)
+- Governance report (Markdown)
+- Governance report (CSV)
+
+Example scripts:
+
+- Status normalization
+- Shipment processing
+- Lifecycle validation
+- Lifecycle analysis
+- Coverage analysis
+- Catalog analysis
+- Unknown status reporting
+
+---
+
+### Quality
+
+- Layered architecture
+- Separation of concerns
+- Immutable business models
+- Governance pipeline
+- Multiple export formats
+- CLI integration
+- API integration
+
+---
+
+### Testing
+
+- Comprehensive unit test suite
+- Governance coverage tests
+- Maturity tests
+- Exporter tests
+- CLI tests
+- API tests
+
+Release validation:
+
+```text
+115 passed
+0 failed
+```
+
+---
+
+## Roadmap
+
+Future releases may include:
+
+- Enhanced CLI workflows
+- Additional export formats
+- Extended reporting capabilities
+- Advanced catalog analytics
+
+No database, dashboard, authentication system, or web UI is planned for the V1.x roadmap.
+
 ## [0.5.0] - 2026-07-09
 
 ### Added

@@ -7,6 +7,24 @@ interface.
 
 from pathlib import Path
 
+from tracking_status_normalizer.cli.governance_cli import (
+    build_governance_report_from_statuses,
+)
+from tracking_status_normalizer.domain.canonical_status import (
+    CanonicalStatus,
+)
+from tracking_status_normalizer.governance.exporters.csv_exporter import (
+    export_summary_to_csv,
+)
+from tracking_status_normalizer.governance.exporters.html_exporter import (
+    export_to_html,
+)
+from tracking_status_normalizer.governance.exporters.json_exporter import (
+    export_to_json,
+)
+from tracking_status_normalizer.governance.exporters.markdown_exporter import (
+    export_to_markdown,
+)
 from tracking_status_normalizer.io.shipment_loader import (
     load_shipment_file,
 )
@@ -89,3 +107,72 @@ def process_command(
     print(f"Unmapped Statuses : {result.unmapped_statuses}")
 
     return 0
+
+
+def governance_command(
+    output_format: str,
+) -> int:
+    """
+    Run governance analysis.
+
+    Args:
+        output_format:
+            Export format.
+
+    Returns:
+        Exit code.
+    """
+
+    try:
+        statuses = {
+            CanonicalStatus.IN_TRANSIT,
+            CanonicalStatus.OUT_FOR_DELIVERY,
+            CanonicalStatus.DELIVERED,
+            CanonicalStatus.EXCEPTION,
+            CanonicalStatus.LOST,
+            CanonicalStatus.DAMAGED,
+            CanonicalStatus.HELD,
+        }
+
+        report = (
+            build_governance_report_from_statuses(
+                statuses
+            )
+        )
+
+        if output_format == "json":
+            output = export_to_json(
+                report
+            )
+
+        elif output_format == "markdown":
+            output = export_to_markdown(
+                report
+            )
+
+        elif output_format == "csv":
+            output = export_summary_to_csv(
+                report
+            )
+
+        elif output_format == "html":
+            output = export_to_html(
+                report
+            )
+
+        else:
+            print(
+                f"Unsupported format: "
+                f"{output_format}"
+            )
+            return 1
+
+        print(output)
+
+        return 0
+
+    except Exception as error:
+        print("ERROR")
+        print("-----")
+        print(str(error))
+        return 1

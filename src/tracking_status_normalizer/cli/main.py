@@ -5,6 +5,7 @@ Command line interface entry point.
 import argparse
 
 from tracking_status_normalizer.cli.commands import (
+    governance_command,
     process_command,
 )
 
@@ -51,6 +52,23 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
 
+    governance_parser = subparsers.add_parser(
+        "governance",
+        help="Run governance analysis.",
+    )
+
+    governance_parser.add_argument(
+        "--format",
+        choices=[
+            "json",
+            "markdown",
+            "csv",
+            "html",
+        ],
+        default="markdown",
+        help="Output format.",
+    )
+
     return parser
 
 
@@ -75,6 +93,11 @@ def main(argv: list[str] | None = None) -> int:
         return process_command(
             shipment_file_path=args.shipment_file,
             mapping_file_path=args.mapping,
+        )
+
+    if args.command == "governance":
+        return governance_command(
+            output_format=args.format,
         )
 
     parser.print_help()

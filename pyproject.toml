@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tracking-status-normalizer"
-version = "0.5.0"
+version = "1.0.0"
 description = "A Python component that normalizes heterogeneous carrier tracking events into a unified shipment status taxonomy."
 readme = "README.md"
 license = { file = "LICENSE" }
